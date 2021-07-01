@@ -1,6 +1,11 @@
+import React, { useState } from "react";
+import axios from "axios";
 import styled from "styled-components";
-import City from "./component/City"
-import Weather from "./component/Weather"
+import City from "./component/City";
+import Weather from "./component/Weather";
+
+const API_KEY = "258d733723f82a038c1a828caa37bb3c";
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -13,31 +18,35 @@ const Container = styled.div`
   background: white;
   font-family: Montserrat;
 `;
-const CityComponnt = styled.div`  
-    display:flex;
-    flex-direction:column;
- `;
 
- 
- const AppLabel = styled.span`
+const AppLabel = styled.span`
   color: black;
   margin: 20px auto;
   font-size: 18px;
   font-weight: bold;
 `;
-
- const WeatherComponnt = styled.div`  
- display:flex;
- flex-direction:column;
-`;
 function App() {
-  return (<
-    Container>
-    <AppLabel>Weather App</AppLabel>
-    {/* <CityComponnt><City></City></CityComponnt> */}
-    <WeatherComponnt><Weather></Weather></WeatherComponnt>
-  </Container>
-  )
+  const [city, updateCity] = useState();
+  const [weather, updateWeather] = useState();
+
+  const fetchWeather = async (e) => {
+    e.preventDefault();
+    const response = await axios.get(
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}`
+    );
+    updateWeather(response.data);
+  };
+
+  return (
+    <Container>
+      <AppLabel>Weather App</AppLabel>
+      {weather ? (
+        <Weather weather={weather}/>
+      ) : (
+        <City updateCity={updateCity} fetchWeather={fetchWeather}></City>
+      )}
+    </Container>
+  );
 }
 
 export default App;
